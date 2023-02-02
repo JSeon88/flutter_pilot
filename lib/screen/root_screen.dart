@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_pilot/screen/home_screen.dart';
 
@@ -9,7 +11,7 @@ class RootScreen extends StatefulWidget{
 
 }
 
-class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
+class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin{
   TabController? tabController;
 
   @override
@@ -18,6 +20,7 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
 
     tabController = TabController(length: 4, vsync: this);
     tabController!.addListener(tabListener);
+
 
   }
 
@@ -34,9 +37,9 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
         centerTitle: true,
       ),
       body: TabBarView(
-        controller: tabController,
-        children: renderChildren(),
-      ),
+            controller: tabController,
+            children: renderChildren(),
+          ),
       bottomNavigationBar: renderBottomNavigation(),
     );
   }
@@ -47,11 +50,33 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+
   List<Widget> renderChildren() {
     return [
       HomeScreen(),
-      const Center(
-        child: Text('탭2'),
+      SingleChildScrollView(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ...List.generate(
+                  10,
+                      (index) => Flexible(
+                    child: Container(
+                      height: 50,
+                      color: Color(Random().nextInt(0xffffffff)),
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      child: Text("top item $index"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       const Center(
         child: Text('탭3'),
@@ -61,6 +86,7 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin {
       )
     ];
   }
+
 
   BottomNavigationBar renderBottomNavigation() {
     return BottomNavigationBar(
