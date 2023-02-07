@@ -1,5 +1,9 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pilot/repository/guide_repository.dart';
 import 'package:flutter_pilot/screen/guide_detail_screen.dart';
+
+import '../model/guide_model.dart';
 
 class GuideScreen extends StatefulWidget {
   const GuideScreen({super.key});
@@ -10,32 +14,54 @@ class GuideScreen extends StatefulWidget {
 }
 
 class _GuideScreenState extends State<GuideScreen> with AutomaticKeepAliveClientMixin{
+  late GuideRepository guideRepository;
+  List<GuideModel> list = [];
+
+  Future _fetchList() async {
+    try {
+      List<GuideModel> res = await guideRepository.getGuideList();
+      setState(() {
+        list = res;
+      });
+    }on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    guideRepository = GuideRepository();
+    _fetchList();
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    const int itemCount = 50;
+    int itemCount = list.length;
 
     return Scaffold(
       body: itemCount > 0 ? ListView.builder(
         itemCount: itemCount,
         itemBuilder: (BuildContext context, int index) {
+          final guideItem = list[index];
+
           return ListTile(
             onTap: () => {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext bc) => GuideDetailScreen()
+                      builder: (BuildContext bc) => GuideDetailScreen(guideModel: guideItem,)
                   )
               )
             },
-            title: Text('제목입니다 ${index + 1}'),
-            subtitle: const Text('#태그1 #태그2 #태그3'),
+            title: Text(guideItem.title),
+            subtitle: Text(guideItem.tags.join(", ")),
             trailing: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Text('작성자'),
-                Text('yyyy-mm-dd')
+              children: [
+                Text(guideItem.register),
+                Text(formatDate(guideItem.date, [yyyy,'-',mm,'-',dd]))
               ],
             ),
           );
