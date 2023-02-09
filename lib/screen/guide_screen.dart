@@ -1,6 +1,7 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pilot/repository/guide_repository.dart';
+import 'package:flutter_pilot/screen/guide_add_screen.dart';
 import 'package:flutter_pilot/screen/guide_detail_screen.dart';
 
 import '../model/guide_model.dart';
@@ -68,6 +69,20 @@ class _GuideScreenState extends State<GuideScreen> with AutomaticKeepAliveClient
         },
       )
           : const Center(child: Text('No items')),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueAccent,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext bc) => GuideAddScreen()
+              )
+          );
+        },
+        child: const Icon(
+          Icons.add,
+        ),
+      ),
     );
   }
 
