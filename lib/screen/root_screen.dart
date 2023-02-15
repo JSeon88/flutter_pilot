@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_pilot/screen/guide_screen.dart';
 import 'package:flutter_pilot/screen/home_screen.dart';
 
 class RootScreen extends StatefulWidget{
@@ -19,14 +20,14 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin{
     super.initState();
 
     tabController = TabController(length: 4, vsync: this);
-    tabController!.addListener(tabListener);
+    // tabController!.addListener(tabListener);
 
 
   }
 
-  tabListener() {
-    setState(() {});
-  }
+  // tabListener() {
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin{
 
   @override
   void dispose() {
-    tabController!.removeListener(tabListener);
+    // tabController!.removeListener(tabListener);
     super.dispose();
   }
 
@@ -54,33 +55,28 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin{
   List<Widget> renderChildren() {
     return [
       HomeScreen(),
-      SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ...List.generate(
-                  10,
-                      (index) => Flexible(
-                    child: Container(
-                      height: 50,
-                      color: Color(Random().nextInt(0xffffffff)),
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      child: Text("top item $index"),
-                    ),
+      DefaultTextStyle(
+        style: Theme.of(context).textTheme.bodyMedium!,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints viewportConstraints) {
+            return SingleChildScrollView(
+              child: Column(
+                children:List.generate(
+                  50,
+                  (index) => Container(
+                    height: 50,
+                    color: Color(Random().nextInt(0xffffffff)),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    child: Text("top item $index"),
                   ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
-      const Center(
-        child: Text('탭3'),
-      ),
+      const GuideScreen(),
       const Center(
         child: Text('탭4'),
       )
