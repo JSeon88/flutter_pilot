@@ -33,7 +33,7 @@ class GuideModel {
       'tags':tags,
       'content':content,
       'register':register,
-      'date':date,
+      'date':'${date.year}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')}',
     };
   }
 

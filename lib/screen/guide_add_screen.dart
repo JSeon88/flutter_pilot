@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pilot/model/guide_model.dart';
+import 'package:flutter_pilot/screen/guide_screen.dart';
+
+import '../repository/guide_repository.dart';
 
 class GuideAddScreen extends StatefulWidget {
   const GuideAddScreen({super.key});
@@ -9,8 +13,26 @@ class GuideAddScreen extends StatefulWidget {
 }
 
 class _GuideAddScreenState extends State<GuideAddScreen> {
-  String selectedValue = "태그1";
+  late GuideRepository guideRepository;
+  final formKey = GlobalKey<FormState>();
+  String _selectedValue = "태그1";
+  final List<String> _allChips = [];
+  Map<String, dynamic> form = {};
 
+  void _onDeleted(chip) {
+    setState(() {
+      _allChips.removeWhere((element) => element == chip);
+    });
+  }
+
+  Future _createGuide(GuideModel guideModel) async {
+    try {
+      await guideRepository.createGuide(guideModel: guideModel);
+    }on Exception catch (e) {
+      print(e);
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,16 +46,21 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
           children: [
             Expanded(
               child: Form(
-                key: GlobalKey<FormState>(),
+                key: formKey,
                 child: Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: ListView(
                     children: [
                       renderTextFormField(
                         label: '제목',
                         isText: true,
-                        onSaved: (val) {},
+                        onSaved: (val) {
+                          form['title'] = val;
+                        },
                         validator: (val) {
+                          if(val.length < 1) {
+                            return '제목은 필수사항입니다.';
+                          }
                           return null;
                         },
                       ),
@@ -45,26 +72,37 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
                         ),
                       ),
                       DropdownButton(
-                        value: selectedValue,
+                        value: _selectedValue,
                         items: dropdownItems,
                         onChanged: (String? newValue) {
                           setState(() {
-                            selectedValue = newValue!;
+                            _selectedValue = newValue!;
+                            _allChips.add(newValue);
                           });
                         },
                       ),
-                      renderTextFormField(
-                        label: '',
-                        isText: true,
-                        onSaved: (val) {},
-                        validator: (val) {
-                          return null;
-                        },
+                      Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: Wrap(
+                            children: _allChips.map((chip) => Chip(
+                              key: ValueKey(chip),
+                              label: Text(chip),
+                              backgroundColor: Colors.amber.shade200,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 7,
+                                  horizontal: 10
+                              ),
+                              deleteIconColor: Colors.red,
+                              onDeleted: () => _onDeleted(chip),
+                            )).toList()
+                        ),
                       ),
                       renderTextFormField(
                         label: '내용',
                         isText: false,
-                        onSaved: (val) {},
+                        onSaved: (val) {
+                          form['content'] = val;
+                        },
                         validator: (val) {
                           return null;
                         },
@@ -88,7 +126,7 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('취소')
+                          child: const Text('취소')
                       ),
                     ),
                   ),
@@ -97,8 +135,61 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
                       margin: const EdgeInsets.fromLTRB(5, 0, 10, 10),
                       color: Colors.grey[100],
                       child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text('저장')
+                          onPressed: () async {
+                            if(formKey.currentState!.validate()){
+                              // final snackBar = SnackBar(
+                              //     content: const Text('Yay! A SnackBar!'),
+                              //     action: SnackBarAction(
+                              //       label: 'Undo',
+                              //       onPressed: () {
+                              //       // Some code to undo the change.
+                              //       },
+                              //     ),
+                              // );
+                              // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                              formKey.currentState!.save();
+                              // form['tag'] = _allChips.toList();
+                              // form['register'] = 'sunny';
+                              // form['date'] = DateTime.now();
+
+                              GuideModel guideModel = GuideModel(
+                                  no: 99,
+                                  title: form['title'],
+                                  tags: _allChips.toList(),
+                                  content: form['content'],
+                                  register: 'sunny',
+                                  date: DateTime.now());
+
+                              guideRepository = GuideRepository();
+                              _createGuide(guideModel);
+
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('등록하시겠습니까?'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    // TODO 밑의 탭 버튼 확인 필요
+                                    TextButton(
+                                      onPressed: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => const GuideScreen(),
+                                              maintainState: false
+                                          )
+                                      ),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('저장')
                       ),
                     ),
                   ),
@@ -128,9 +219,6 @@ renderTextFormField({
   required FormFieldSetter onSaved,
   required FormFieldValidator validator,
 }) {
-  assert(onSaved != null);
-  assert(validator != null);
-
   return Column(
     children: [
       Row(
@@ -153,7 +241,7 @@ renderTextFormField({
         decoration: InputDecoration(
           border: InputBorder.none,
           filled: true,
-          fillColor: Colors.grey[300]
+          fillColor: Colors.blue[50]
         ),
       ),
       Container(height: 16.0),
