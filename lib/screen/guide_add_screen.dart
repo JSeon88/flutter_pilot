@@ -1,40 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pilot/model/guide_model.dart';
+import 'package:flutter_pilot/provider/guide_provider.dart';
 import 'package:flutter_pilot/screen/guide_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../repository/guide_repository.dart';
 
-class GuideAddScreen extends StatefulWidget {
+class GuideAddScreen extends StatelessWidget {
   const GuideAddScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _GuideAddScreenState();
-
-}
-
-class _GuideAddScreenState extends State<GuideAddScreen> {
-  late GuideRepository guideRepository;
-  final formKey = GlobalKey<FormState>();
-  String _selectedValue = "태그1";
-  final List<String> _allChips = [];
-  Map<String, dynamic> form = {};
-
-  void _onDeleted(chip) {
-    setState(() {
-      _allChips.removeWhere((element) => element == chip);
-    });
-  }
-
-  Future _createGuide(GuideModel guideModel) async {
-    try {
-      await guideRepository.createGuide(guideModel: guideModel);
-    }on Exception catch (e) {
-      print(e);
-    }
-  }
-  
-  @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    String _selectedValue = "태그1";
+    final List<String> _allChips = [];
+    Map<String, dynamic> form = {};
+
+    // void _onDeleted(chip) {
+    //   setState(() {
+    //     _allChips.removeWhere((element) => element == chip);
+    //   });
+    // }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[300],
@@ -75,10 +62,10 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
                         value: _selectedValue,
                         items: dropdownItems,
                         onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedValue = newValue!;
-                            _allChips.add(newValue);
-                          });
+                          // setState(() {
+                          //   _selectedValue = newValue!;
+                          //   _allChips.add(newValue);
+                          // });
                         },
                       ),
                       Padding(
@@ -93,7 +80,7 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
                                   horizontal: 10
                               ),
                               deleteIconColor: Colors.red,
-                              onDeleted: () => _onDeleted(chip),
+                              // onDeleted: () => _onDeleted(chip),
                             )).toList()
                         ),
                       ),
@@ -141,13 +128,14 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
 
                               GuideModel guideModel = GuideModel(
                                   title: form['title'],
-                                  tags: _allChips.toList(),
+                                  // tags: _allChips.toList(),
+                                  tags: ['태그2'],
                                   content: form['content'],
                                   register: 'sunny',
                                   date: DateTime.now());
 
-                              guideRepository = GuideRepository();
-                              _createGuide(guideModel);
+                              // _createGuide(guideModel);
+                              context.read<GuideProvider>().createGuide(guideModel: guideModel);
 
                               showDialog<String>(
                                 context: context,
@@ -186,6 +174,7 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
       ),
     );
   }
+
 }
 
 List<DropdownMenuItem<String>> get dropdownItems{

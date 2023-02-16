@@ -22,13 +22,13 @@ class GuideRepository {
   }
 
   // 가이드 등록
-  Future<int> createGuide({
+  Future<GuideModel> createGuide({
     required GuideModel guideModel
   }) async {
     final json = guideModel.toJson();
 
     final res = await _dio.post(_targetUrl, data: json);
 
-    return res.data?['no'];
+    return GuideModel.fromJson(json: res.data);
   }
 }

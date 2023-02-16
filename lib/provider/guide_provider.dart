@@ -18,5 +18,13 @@ class GuideProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void createGuide({
+    required GuideModel guideModel
+  }) async {
+    GuideModel result = await repository.createGuide(guideModel: guideModel);
+    _guideList.add(result);
+    notifyListeners();
+  }
+
   get list => _guideList;
 }
