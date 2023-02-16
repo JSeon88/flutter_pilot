@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pilot/provider/guide_provider.dart';
+import 'package:flutter_pilot/repository/guide_repository.dart';
 import 'package:flutter_pilot/screen/root_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  final repository = GuideRepository();
+  final guideProvider = GuideProvider(repository: repository);
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => guideProvider,
+      child: MaterialApp (
+        theme: ThemeData(
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.grey[600],
+          ),
+        ),
+        home: const RootScreen()
+      )
+    )
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey[600],
-        )
-      ),
-      home: RootScreen(),
-    );
-  }
-}
 

@@ -1,44 +1,19 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pilot/repository/guide_repository.dart';
+import 'package:flutter_pilot/provider/guide_provider.dart';
 import 'package:flutter_pilot/screen/guide_add_screen.dart';
 import 'package:flutter_pilot/screen/guide_detail_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../model/guide_model.dart';
 
-class GuideScreen extends StatefulWidget {
+class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _GuideScreenState();
-
-}
-
-class _GuideScreenState extends State<GuideScreen> with AutomaticKeepAliveClientMixin{
-  late GuideRepository guideRepository;
-  List<GuideModel> list = [];
-
-  Future _fetchList() async {
-    try {
-      List<GuideModel> res = await guideRepository.getGuideList();
-      setState(() {
-        list = res;
-      });
-    }on Exception catch (e) {
-      print(e);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    guideRepository = GuideRepository();
-    _fetchList();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
+    final guideProvider = context.watch<GuideProvider>();
+    List<GuideModel> list = guideProvider.list;
     int itemCount = list.length;
 
     return Scaffold(
@@ -86,6 +61,5 @@ class _GuideScreenState extends State<GuideScreen> with AutomaticKeepAliveClient
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
+
 }

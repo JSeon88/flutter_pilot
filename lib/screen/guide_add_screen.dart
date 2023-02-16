@@ -137,24 +137,9 @@ class _GuideAddScreenState extends State<GuideAddScreen> {
                       child: ElevatedButton(
                           onPressed: () async {
                             if(formKey.currentState!.validate()){
-                              // final snackBar = SnackBar(
-                              //     content: const Text('Yay! A SnackBar!'),
-                              //     action: SnackBarAction(
-                              //       label: 'Undo',
-                              //       onPressed: () {
-                              //       // Some code to undo the change.
-                              //       },
-                              //     ),
-                              // );
-                              // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
                               formKey.currentState!.save();
-                              // form['tag'] = _allChips.toList();
-                              // form['register'] = 'sunny';
-                              // form['date'] = DateTime.now();
 
                               GuideModel guideModel = GuideModel(
-                                  no: 99,
                                   title: form['title'],
                                   tags: _allChips.toList(),
                                   content: form['content'],
