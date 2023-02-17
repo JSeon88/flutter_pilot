@@ -4,23 +4,16 @@ import 'package:flutter_pilot/provider/guide_provider.dart';
 import 'package:flutter_pilot/screen/guide_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../repository/guide_repository.dart';
-
 class GuideAddScreen extends StatelessWidget {
   const GuideAddScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    String _selectedValue = "태그1";
-    final List<String> _allChips = [];
-    Map<String, dynamic> form = {};
+    final tagProvider = context.watch<GuideProvider>();
 
-    // void _onDeleted(chip) {
-    //   setState(() {
-    //     _allChips.removeWhere((element) => element == chip);
-    //   });
-    // }
+    final List<String> _allChips = tagProvider.tagList;
+    Map<String, dynamic> form = {};
 
     return Scaffold(
       appBar: AppBar(
@@ -58,14 +51,14 @@ class GuideAddScreen extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      DropdownButton(
-                        value: _selectedValue,
+                      DropdownButton<String>(
+                        value: tagProvider.selectedTag,
                         items: dropdownItems,
                         onChanged: (String? newValue) {
-                          // setState(() {
-                          //   _selectedValue = newValue!;
-                          //   _allChips.add(newValue);
-                          // });
+                          if (newValue == null) {
+                            return;
+                          }
+                          tagProvider.changeTag(tag: newValue);
                         },
                       ),
                       Padding(
@@ -80,7 +73,7 @@ class GuideAddScreen extends StatelessWidget {
                                   horizontal: 10
                               ),
                               deleteIconColor: Colors.red,
-                              // onDeleted: () => _onDeleted(chip),
+                              onDeleted: () => tagProvider.deleteTag(tag : chip),
                             )).toList()
                         ),
                       ),
@@ -128,13 +121,11 @@ class GuideAddScreen extends StatelessWidget {
 
                               GuideModel guideModel = GuideModel(
                                   title: form['title'],
-                                  // tags: _allChips.toList(),
-                                  tags: ['태그2'],
+                                  tags: _allChips.toList(),
                                   content: form['content'],
                                   register: 'sunny',
                                   date: DateTime.now());
 
-                              // _createGuide(guideModel);
                               context.read<GuideProvider>().createGuide(guideModel: guideModel);
 
                               showDialog<String>(

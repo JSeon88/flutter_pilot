@@ -7,6 +7,9 @@ class GuideProvider extends ChangeNotifier{
   final GuideRepository repository;
   late List<GuideModel> _guideList = [];
 
+  String _selectedTag = "태그1";
+  final List<String> _allTags = [];
+
   GuideProvider({
     required this.repository
   }) : super() {
@@ -26,5 +29,22 @@ class GuideProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void changeTag ({
+    required String tag
+  }) {
+    _selectedTag = tag;
+    _allTags.add(tag);
+    notifyListeners();
+  }
+
+  void deleteTag({
+    required String tag
+  }) {
+    _allTags.removeWhere((element) => element == tag);
+    notifyListeners();
+  }
+
   get list => _guideList;
+  get tagList => _allTags;
+  get selectedTag => _selectedTag;
 }
