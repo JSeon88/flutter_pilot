@@ -1,5 +1,5 @@
 class GuideModel {
-  final int no;
+  final int? no;
   final String title;
   final List<dynamic> tags;
   final String content;
@@ -7,7 +7,7 @@ class GuideModel {
   final DateTime date;
 
   GuideModel({
-    required this.no,
+    this.no,
     required this.title,
     required this.tags,
     required this.content,
@@ -47,7 +47,7 @@ class GuideModel {
     DateTime? date,
   }){
     return GuideModel(
-        no: this.no,
+        no : this.no,
         title: title ?? this.title,
         tags: tags ?? this.tags,
         content: content ?? this.content,
