@@ -12,52 +12,57 @@ class GuideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final guideProvider = context.watch<GuideProvider>();
-    List<GuideModel> list = guideProvider.list;
-    int itemCount = list.length;
 
-    return Scaffold(
-      body: itemCount > 0 ? ListView.builder(
-        itemCount: itemCount,
-        itemBuilder: (BuildContext context, int index) {
-          final guideItem = list[index];
+    return ChangeNotifierProvider(
+        create: (_) => guideProvider,
+        builder: (BuildContext context, child) {
 
-          return ListTile(
-            onTap: () => {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext bc) => GuideDetailScreen(guideModel: guideItem,)
-                  )
-              )
-            },
-            title: Text(guideItem.title),
-            subtitle: Text(guideItem.tags.join(", ")),
-            trailing: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(guideItem.register),
-                Text(formatDate(guideItem.date, [yyyy,'-',mm,'-',dd]))
-              ],
+          List<GuideModel> list = context.watch<GuideProvider>().list;
+          int itemCount = list.length;
+          return Scaffold(
+            body: itemCount > 0 ? ListView.builder(
+              itemCount: itemCount,
+              itemBuilder: (BuildContext context, int index) {
+                final guideItem = list[index];
+
+                return ListTile(
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext bc) => GuideDetailScreen(guideModel: guideItem,)
+                        )
+                    )
+                  },
+                  title: Text(guideItem.title),
+                  subtitle: Text(guideItem.tags.join(", ")),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(guideItem.register),
+                      Text(formatDate(guideItem.date, [yyyy,'-',mm,'-',dd]))
+                    ],
+                  ),
+                );
+              },
+            )
+                : const Center(child: Text('No items')),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.blueAccent,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext bc) => GuideAddScreen()
+                    )
+                );
+              },
+              child: const Icon(
+                Icons.add,
+              ),
             ),
           );
         },
-      )
-          : const Center(child: Text('No items')),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext bc) => GuideAddScreen()
-              )
-          );
-        },
-        child: const Icon(
-          Icons.add,
-        ),
-      ),
     );
   }
 
