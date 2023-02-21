@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_pilot/screen/calendar_screen.dart';
 import 'package:flutter_pilot/screen/guide_screen.dart';
 import 'package:flutter_pilot/screen/home_screen.dart';
 
@@ -77,9 +78,7 @@ class _RootScreenState extends State<RootScreen> with TickerProviderStateMixin{
         ),
       ),
       const GuideScreen(),
-      const Center(
-        child: Text('탭4'),
-      )
+      const CalendarScreen()
     ];
   }
 
