@@ -66,7 +66,7 @@ class Calendar extends StatelessWidget {
         ),
         weekendTextStyle: TextStyle(    // 주말 글꼴
             fontWeight: FontWeight.w600,
-            // color: Colors.red[600]
+            color: Colors.red[600]
         ),
         selectedTextStyle: const TextStyle(   // 선택된 날짜 글꼴
           fontWeight: FontWeight.w600,
@@ -74,26 +74,28 @@ class Calendar extends StatelessWidget {
         ),
       ),
       calendarBuilders: CalendarBuilders(
-        weekNumberBuilder: (BuildContext context, int weekNumber) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Center(
+        dowBuilder: (BuildContext context, DateTime day) {
+          final sunString = DateFormat.E("ko-KR").format(day);
+          return Center(
+            child: ExcludeSemantics(
               child: Text(
-                weekNumber.toString(),
-                style: TextStyle(
+                sunString,
+                style: _isSun(day)
+                    ? TextStyle(
                     color: Colors.red[600]
+                )
+                    : TextStyle(
+                    color: Colors.grey[600]
                 ),
               ),
             ),
           );
         },
-        dowBuilder: (BuildContext context, DateTime day) {
-            final sunString = DateFormat.E().format(day);
-
+        defaultBuilder: (BuildContext context, DateTime day, DateTime focusedDay) {
             return Center(
               child: ExcludeSemantics(
                 child: Text(
-                  sunString,
+                  day.day.toString(),
                   style: _isSun(day)
                       ? TextStyle(
                           color: Colors.red[600]
